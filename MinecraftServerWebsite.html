@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinecraftWorkGroup | 专业生存服务器</title>
+    <link href="https://s2.ssl.qhres2.com/static/56662140ef7d5d03.css"  rel="stylesheet">
+    <link href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css"  rel="stylesheet">
+    <script src="https://s2.ssl.qhres2.com/!2dd0bbf7/echats.js"></script> 
+    <style>
+        :root {
+            --primary: #2ECC71;
+            --secondary: #3498DB;
+            --dark: #2C3E50;
+            --light: #ECF0F1;
+            --accent: #E74C3C;
+            --gold: #F1C40F;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, #1A252F 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  width="100" height="100" viewBox="0 0 100 100"><rect width="10" height="10" fill="%232ECC71" opacity="0.1"/></svg>');
+            opacity: 0.05;
+        }
+        
+        .minecraft-block {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-size: cover;
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+        
+        .interactive-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .interactive-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .floating-btn {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .pulse-effect {
+            animation: pulse 2s infinite;
+        }
+        
+        .server-stats {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .parallax-section {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: var(--light);
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .drag-container {
+            touch-action: none;
+            user-select: none;
+        }
+        
+        .drag-item {
+            touch-action: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- 3D浮动方块背景 -->
+    <div class="hero relative flex items-center justify-center">
+        <div id="floating-blocks"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col items-center text-center">
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                    Minecraft<span class="text-yellow-300">WorkGroup</span>
+                </h1>
+                
+                <p class="text-xl md:text-2xl mb-10 max-w-3xl leading-relaxed">
+                    专业生存服务器 | 极致游戏体验 | 创新互动玩法
+                </p>
+                
+                <!-- 互动式加入按钮 -->
+                <div class="relative group">
+                    <button class="floating-btn bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg transform transition-all duration-300 hover:scale-105">
+                        <span class="flex items-center">
+                            <i class="fas fa-gamepad mr-3"></i> 立即加入服务器
+                        </span>
+                    </button>
+                    <div class="absolute -inset-2 bg-gradient-to-r from-green-400 to-blue-500 rounded-full opacity-0 group-hover:opacity-75 blur-md transition duration-300"></div>
+                </div>
+                
+                <!-- 互动式统计展示 -->
+                <div class="server-stats mt-16 p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="interactive-card flex flex-col items-center p-4" data-count="12000">
+                        <div class="text-4xl font-bold text-yellow-300 mb-2">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="text-3xl font-bold counter">0</div>
+                        <div class="text-gray-300">在线玩家</div>
+                    </div>
+                    
+                    <div class="interactive-card flex flex-col items-center p-4" data-count="365">
+                        <div class="text-4xl font-bold text-yellow-300 mb-2">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="text-3xl font-bold counter">0</div>
+                        <div class="text-gray-300">运行天数</div>
+                    </div>
+                    
+                    <div class="interactive-card flex flex-col items-center p-4" data-count="42">
+                        <div class="text-4xl font-bold text-yellow-300 mb-2">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="text-3xl font-bold counter">0</div>
+                        <div class="text-gray-300">独特玩法</div>
+                    </div>
+                    
+                    <div class="interactive-card flex flex-col items-center p-4" data-count="100">
+                        <div class="text-4xl font-bold text-yellow-300 mb-2">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="text-3xl font-bold counter">0</div>
+                        <div class="text-gray-300">满意度</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 可拖动方块展示区 -->
+    <section class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">互动</span> 方块展示
+            </h2>
+            
+            <div class="drag-container flex flex-wrap justify-center gap-6">
+                <div class="drag-item interactive-card w-32 h-32 bg-green-600 flex items-center justify-center rounded-lg cursor-grab active:cursor-grabbing" draggable="true" data-block="grass">
+                    <i class="fas fa-leaf text-5xl text-white"></i>
+                </div>
+                <div class="drag-item interactive-card w-32 h-32 bg-blue-600 flex items-center justify-center rounded-lg cursor-grab active:cursor-grabbing" draggable="true" data-block="water">
+                    <i class="fas fa-tint text-5xl text-white"></i>
+                </div>
+                <div class="drag-item interactive-card w-32 h-32 bg-yellow-600 flex items-center justify-center rounded-lg cursor-grab active:cursor-grabbing" draggable="true" data-block="gold">
+                    <i class="fas fa-coins text-5xl text-white"></i>
+                </div>
+                <div class="drag-item interactive-card w-32 h-32 bg-red-600 flex items-center justify-center rounded-lg cursor-grab active:cursor-grabbing" draggable="true" data-block="lava">
+                    <i class="fas fa-fire text-5xl text-white"></i>
+                </div>
+                <div class="drag-item interactive-card w-32 h-32 bg-gray-600 flex items-center justify-center rounded-lg cursor-grab active:cursor-grabbing" draggable="true" data-block="stone">
+                    <i class="fas fa-mountain text-5xl text-white"></i>
+                </div>
+                <div class="drag-item interactive-card w-32 h-32 bg-purple-600 flex items-center justify-center rounded-lg cursor-grab active:cursor-grabbing" draggable="true" data-block="diamond">
+                    <i class="fas fa-gem text-5xl text-white"></i>
+                </div>
+            </div>
+            
+            <div class="mt-12 bg-gray-800 rounded-lg p-6 min-h-32 border-2 border-dashed border-gray-700" id="drop-zone">
+                <p class="text-center text-gray-400">拖动方块到此处进行组合</p>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button id="reset-blocks" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-6 rounded-full transition">
+                    <i class="fas fa-redo mr-2"></i> 重置方块
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 服务器特色展示 -->
+    <section class="parallax-section py-20" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1607513746994-51f730a44832?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"> 
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-yellow-300">
+                <i class="fas fa-crown mr-4"></i> 服务器特色
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="interactive-card bg-gray-900 bg-opacity-80 rounded-xl p-8 backdrop-filter backdrop-blur-sm">
+                    <div class="text-5xl text-green-400 mb-6">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">专业反作弊</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        采用最新反作弊技术，确保公平游戏环境。我们的系统能实时检测并阻止任何作弊行为。
+                    </p>
+                    <div class="mt-6">
+                        <div class="tooltip">
+                            <span class="inline-block bg-green-900 text-green-300 text-sm px-3 py-1 rounded-full">
+                                <i class="fas fa-info-circle mr-1"></i> 技术详情
+                            </span>
+                            <span class="tooltip-text">使用AI行为分析+模式识别技术，准确率高达99.7%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interactive-card bg-gray-900 bg-opacity-80 rounded-xl p-8 backdrop-filter backdrop-blur-sm">
+                    <div class="text-5xl text-blue-400 mb-6">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">高性能网络</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        全球分布式服务器节点，延迟低于50ms。24/7专业技术团队保障服务器稳定运行。
+                    </p>
+                    <div class="mt-6">
+                        <div class="tooltip">
+                            <span class="inline-block bg-blue-900 text-blue-300 text-sm px-3 py-1 rounded-full">
+                                <i class="fas fa-server mr-1"></i> 服务器状态
+                            </span>
+                            <span class="tooltip-text">当前在线率99.99%，过去30天无宕机记录</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interactive-card bg-gray-900 bg-opacity-80 rounded-xl p-8 backdrop-filter backdrop-blur-sm">
+                    <div class="text-5xl text-purple-400 mb-6">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">创新玩法</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        每月更新独特游戏模式，从生存挑战到建筑竞赛，总有新鲜体验等你发现。
+                    </p>
+                    <div class="mt-6">
+                        <div class="tooltip">
+                            <span class="inline-block bg-purple-900 text-purple-300 text-sm px-3 py-1 rounded-full">
+                                <i class="fas fa-calendar-alt mr-1"></i> 活动日历
+                            </span>
+                            <span class="tooltip-text">下周将举办"极限生存挑战赛"，奖金池1000钻石</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 3D旋转团队成员展示 -->
+    <section class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">
+                <i class="fas fa-users-cog mr-4"></i> 专业团队
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="team-card interactive-card relative h-64 rounded-xl overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"  
+                         alt="开发主管" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold text-white">Alex Chen</h3>
+                        <p class="text-green-300">首席开发工程师</p>
+                        <div class="mt-2 flex space-x-2">
+                            <span class="bg-green-900 text-green-300 text-xs px-2 py-1 rounded">红石专家</span>
+                            <span class="bg-blue-900 text-blue-300 text-xs px-2 py-1 rounded">插件开发</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card interactive-card relative h-64 rounded-xl overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"  
+                         alt="建筑总监" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold text-white">Emma Wang</h3>
+                        <p class="text-yellow-300">建筑艺术总监</p>
+                        <div class="mt-2 flex space-x-2">
+                            <span class="bg-yellow-900 text-yellow-300 text-xs px-2 py-1 rounded">中世纪风格</span>
+                            <span class="bg-purple-900 text-purple-300 text-xs px-2 py-1 rounded">城市规划</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card interactive-card relative h-64 rounded-xl overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"  
+                         alt="运营经理" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold text-white">David Li</h3>
+                        <p class="text-blue-300">社区运营经理</p>
+                        <div class="mt-2 flex space-x-2">
+                            <span class="bg-blue-900 text-blue-300 text-xs px-2 py-1 rounded">活动策划</span>
+                            <span class="bg-red-900 text-red-300 text-xs px-2 py-1 rounded">玩家关系</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card interactive-card relative h-64 rounded-xl overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"  
+                         alt="技术顾问" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold text-white">Michael Zhang</h3>
+                        <p class="text-purple-300">高级技术顾问</p>
+                        <div class="mt-2 flex space-x-2">
+                            <span class="bg-purple-900 text-purple-300 text-xs px-2 py-1 rounded">服务器优化</span>
+                            <span class="bg-green-900 text-green-300 text-xs px-2 py-1 rounded">网络安全</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center">
+                <button class="interactive-card bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform transition-all duration-300 hover:scale-105">
+                    <i class="fas fa-user-plus mr-2"></i> 加入我们的团队
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 服务器规则互动问答 -->
+    <section class="py-20 bg-gray-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">
+                <i class="fas fa-question-circle mr-4"></i> 服务器规则问答
+            </h2>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="interactive-card bg-gray-900 rounded-xl p-6 mb-6 cursor-pointer rule-question" data-answer="1">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-white">可以使用哪些客户端模组？</h3>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </div>
+                    <div class="rule-answer mt-4 hidden text-gray-300 leading-relaxed">
+                        我们允许使用性能优化类模组（如OptiFine），但严格禁止任何给予不公平优势的模组（如X-Ray、飞行等）。完整的允许模组列表可以在我们的Discord频道中找到。
+                    </div>
+                </div>
+                
+                <div class="interactive-card bg-gray-900 rounded-xl p-6 mb-6 cursor-pointer rule-question" data-answer="2">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-white">服务器有经济系统吗？</h3>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </div>
+                    <div class="rule-answer mt-4 hidden text-gray-300 leading-relaxed">
+                        是的，我们有一个完善的基于钻石的经济系统。玩家可以通过交易、完成任务或参与活动获得货币。我们还设有玩家经营的商店区和每周拍卖会。
+                    </div>
+                </div>
+                
+                <div class="interactive-card bg-gray-900 rounded-xl p-6 mb-6 cursor-pointer rule-question" data-answer="3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-white">如何保护我的建筑？</h3>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </div>
+                    <div class="rule-answer mt-4 hidden text-gray-300 leading-relaxed">
+                        我们使用WorldGuard插件保护玩家领地。新玩家注册后将获得基本保护区域，可以通过游戏内货币购买更多保护区块。所有建筑都会定期备份。
+                    </div>
+                </div>
+                
+                <div class="interactive-card bg-gray-900 rounded-xl p-6 mb-6 cursor-pointer rule-question" data-answer="4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-white">遇到问题如何联系管理员？</h3>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </div>
+                    <div class="rule-answer mt-4 hidden text-gray-300 leading-relaxed">
+                        可以通过游戏内/ticket命令提交问题，或加入我们的Discord支持频道。我们的管理团队全天候在线，平均响应时间小于15分钟。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 互动式地图预览 -->
+    <section class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">
+                <i class="fas fa-map-marked-alt mr-4"></i> 服务器地图预览
+            </h2>
+            
+            <div class="relative bg-gray-800 rounded-xl overflow-hidden h-96" id="interactive-map">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-map text-5xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-500">加载互动地图中...</p>
+                    </div>
+                </div>
+                
+                <div class="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-80 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-bold">主城区域</h3>
+                            <p class="text-gray-400 text-sm">坐标: X=120, Z=80</p>
+                        </div>
+                        <button class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-full text-sm transition">
+                            <i class="fas fa-expand mr-2"></i> 全屏查看
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="absolute top-4 right-4 flex space-x-2">
+                    <button class="map-control bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition" data-action="zoom-in">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="map-control bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition" data-action="zoom-out">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="map-control bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition" data-action="reset">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="absolute top-4 left-4">
+                    <div class="tooltip">
+                        <button class="map-control bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition" data-action="legend">
+                            <i class="fas fa-layer-group"></i>
+                        </button>
+                        <span class="tooltip-text">显示地图图例</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="interactive-card bg-gray-800 rounded-lg p-4 flex items-center">
+                    <div class="bg-green-900 text-green-300 p-3 rounded-full mr-4">
+                        <i class="fas fa-tree text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold">生态保护区</h3>
+                        <p class="text-gray-400 text-sm">禁止破坏的原始森林区域</p>
+                    </div>
+                </div>
+                
+                <div class="interactive-card bg-gray-800 rounded-lg p-4 flex items-center">
+                    <div class="bg-blue-900 text-blue-300 p-3 rounded-full mr-4">
+                        <i class="fas fa-store text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold">商业区</h3>
+                        <p class="text-gray-400 text-sm">玩家经营商店集中区域</p>
+                    </div>
+                </div>
+                
+                <div class="interactive-card bg-gray-800 rounded-lg p-4 flex items-center">
+                    <div class="bg-purple-900 text-purple-300 p-3 rounded-full mr-4">
+                        <i class="fas fa-landmark text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold">市政中心</h3>
+                        <p class="text-gray-400 text-sm">服务器公告和活动中心</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 玩家评价互动轮播 -->
+    <section class="py-20 bg-gray-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">
+                <i class="fas fa-comment-dots mr-4"></i> 玩家评价
+            </h2>
+            
+            <div class="max-w-4xl mx-auto relative">
+                <div class="testimonial-slider overflow-hidden">
+                    <div class="flex transition-transform duration-500 ease-in-out" id="testimonial-track">
+                        <div class="testimonial-slide flex-shrink-0 w-full px-4">
+                            <div class="interactive-card bg-gray-900 rounded-xl p-8">
+                                <div class="flex items-center mb-6">
+                                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"  
+                                         alt="玩家头像" 
+                                         class="w-16 h-16 rounded-full object-cover border-2 border-green-500">
+                                    <div class="ml-4">
+                                        <h3 class="text-xl font-bold text-white">Emily Johnson</h3>
+                                        <p class="text-green-400">资深玩家 | 加入2年</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-300 leading-relaxed italic">
+                                    "这是我玩过最棒的生存服务器！管理团队非常专业，社区氛围友好。特别喜欢每周的建筑挑战活动，让我认识了很多志同道合的朋友。"
+                                </p>
+                                <div class="mt-6 flex">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="testimonial-slide flex-shrink-0 w-full px-4">
+                            <div class="interactive-card bg-gray-900 rounded-xl p-8">
+                                <div class="flex items-center mb-6">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"  
+                                         alt="玩家头像" 
+                                         class="w-16 h-16 rounded-full object-cover border-2 border-blue-500">
+                                    <div class="ml-4">
+                                        <h3 class="text-xl font-bold text-white">Michael Chen</h3>
+                                        <p class="text-blue-400">红石工程师 | 加入1年</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-300 leading-relaxed italic">
+                                    "作为红石爱好者，这里的红石限制非常合理，服务器性能也很稳定，可以运行复杂的红石机械。技术团队经常举办红石研讨会，学到了很多高级技巧。"
+                                </p>
+                                <div class="mt-6 flex">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="testimonial-slide flex-shrink-0 w-full px-4">
+                            <div class="interactive-card bg-gray-900 rounded-xl p-8">
+                                <div class="flex items-center mb-6">
+                                    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"  
+                                         alt="玩家头像" 
+                                         class="w-16 h-16 rounded-full object-cover border-2 border-purple-500">
+                                    <div class="ml-4">
+                                        <h3 class="text-xl font-bold text-white">Sarah Williams</h3>
+                                        <p class="text-purple-400">建筑团队 | 加入3年</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-300 leading-relaxed italic">
+                                    "服务器的建筑社区太棒了！我们有一支专业的建筑团队，定期举办主题建筑活动。最喜欢的是中世纪城堡项目，整个团队花了3个月完成的杰作。"
+                                </p>
+                                <div class="mt-6 flex">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="testimonial-nav absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-900 bg-opacity-80 hover:bg-opacity-100 text-white p-3 rounded-full transition" data-direction="prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <button class="testimonial-nav absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-900 bg-opacity-80 hover:bg-opacity-100 text-white p-3 rounded-full transition" data-direction="next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                
+                <div class="flex justify-center mt-8 space-x-2" id="testimonial-dots">
+                    <button class="w-3 h-3 rounded-full bg-gray-600 hover:bg-gray-400 transition dot active" data-slide="0"></button>
+                    <button class="w-3 h-3 rounded-full bg-gray-600 hover:bg-gray-400 transition dot" data-slide="1"></button>
+                    <button class="w-3 h-3 rounded-full bg-gray-600 hover:bg-gray-400 transition dot" data-slide="2"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 互动式加入表单 -->
+    <section class="py-20 bg-gradient-to-br from-gray-900 to-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto bg-gray-900 rounded-xl overflow-hidden shadow-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-2">
+                    <div class="p-10 flex flex-col justify-center">
+                        <h2 class="text-3xl font-bold text-white mb-6">准备好加入冒险了吗？</h2>
+                        <p class="text-gray-400 mb-8 leading-relaxed">
+                            填写简单表单，立即加入我们的Minecraft生存服务器。成为MinecraftWorkGroup社区的一员，开启你的方块世界冒险！
+                        </p>
+                        
+                        <div class="flex items-center space-x-4 mb-8">
+                            <div class="flex-1 h-px bg-gray-700"></div>
+                            <span class="text-gray-500 text-sm">快速加入</span>
+                            <div class="flex-1 h-px bg-gray-700"></div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <button class="interactive-card bg-blue-800 hover:bg-blue-700 text-white py-3 px-4 rounded-lg flex items-center justify-center transition">
+                                <i class="fab fa-discord mr-2"></i> Discord
+                            </button>
+                            <button class="interactive-card bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg flex items-center justify-center transition">
+                                <i class="fab fa-google mr-2"></i> Google
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-10">
+                        <form id="join-form" class="space-y-6">
+                            <div>
+                                <label for="username" class="block text-sm font-medium text-gray-400 mb-2">游戏ID</label>
+                                <input type="text" id="username" name="username" 
+                                       class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition" 
+                                       placeholder="输入你的Minecraft用户名">
+                            </div>
+                            
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-400 mb-2">电子邮箱</label>
+                                <input type="email" id="email" name="email" 
+                                       class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition" 
+                                       placeholder="用于接收服务器信息">
+                            </div>
+                            
+                            <div>
+                                <label for="experience" class="block text-sm font-medium text-gray-400 mb-2">Minecraft经验</label>
+                                <select id="experience" name="experience" 
+                                        class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none transition">
+                                    <option value="">选择你的经验水平</option>
+                                    <option value="beginner">新手 (0-6个月)</option>
+                                    <option value="intermediate">中级 (6个月-2年)</option>
+                                    <option value="advanced">高级 (2年以上)</option>
+                                    <option value="expert">专家 (红石/建筑大师)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input id="terms" name="terms" type="checkbox" 
+                                       class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-600 rounded bg-gray-700">
+                                <label for="terms" class="ml-2 block text-sm text-gray-400">
+                                    我同意服务器规则和条款
+                                </label>
+                            </div>
+                            
+                            <button type="submit" 
+                                    class="w-full interactive-card bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105">
+                                <i class="fas fa-paper-plane mr-2"></i> 提交申请
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer class="py-12 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h2 class="text-2xl font-bold text-white">
+                        Minecraft<span class="text-yellow-300">WorkGroup</span>
+                    </h2>
+                    <p class="text-gray-500 mt-2">专业生存服务器 © 2025</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <button class="interactive-card bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full transition">
+                        <i class="fab fa-discord text-xl"></i>
+                    </button>
+                    <button class="interactive-card bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full transition">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </button>
+                    <button class="interactive-card bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full transition">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </button>
+                    <button class="interactive-card bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">服务器</h3>
+                        <ul class="space-y-2">
+                            <li><button class="text-gray-500 hover:text-white transition">状态</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">规则</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">地图</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">投票</button></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">社区</h3>
+                        <ul class="space-y-2">
+                            <li><button class="text-gray-500 hover:text-white transition">论坛</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">活动</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">画廊</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">Wiki</button></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">支持</h3>
+                        <ul class="space-y-2">
+                            <li><button class="text-gray-500 hover:text-white transition">帮助中心</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">常见问题</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">联系我们</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">捐赠</button></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">法律</h3>
+                        <ul class="space-y-2">
+                            <li><button class="text-gray-500 hover:text-white transition">隐私政策</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">使用条款</button></li>
+                            <li><button class="text-gray-500 hover:text-white transition">Cookie政策</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded',  function() {
+            // 创建浮动Minecraft方块背景
+            const floatingBlocks = document.getElementById('floating-blocks'); 
+            const blockTypes = ['grass', 'dirt', 'stone', 'wood', 'brick', 'glass', 'gold', 'diamond'];
+            
+            for (let i = 0; i < 20; i++) {
+                const block = document.createElement('div'); 
+                block.className  = 'minecraft-block';
+                
+                // 随机选择方块类型
+                const randomType = blockTypes[Math.floor(Math.random() * blockTypes.length)]; 
+                block.dataset.type  = randomType;
+                
+                // 随机位置和大小
+                const size = Math.random()  * 40 + 20;
+                block.style.width  = `${size}px`;
+                block.style.height  = `${size}px`;
+                block.style.left  = `${Math.random()  * 100}%`;
+                block.style.top  = `${Math.random()  * 100}%`;
+                
+                // 随机旋转
+                block.style.transform  = `rotate(${Math.random()  * 360}deg)`;
+                
+                // 随机延迟显示
+                block.style.transitionDelay  = `${Math.random()  * 2}s`;
+                block.style.opacity  = '0.8';
+                
+                // 随机动画
+                const animationDuration = Math.random()  * 10 + 10;
+                block.style.animation  = `float ${animationDuration}s ease-in-out infinite`;
+                
+                floatingBlocks.appendChild(block); 
+            }
+            
+            // 计数器动画
+            const counters = document.querySelectorAll('.counter'); 
+            const speed = 200;
+            
+            counters.forEach(counter  => {
+                const target = +counter.parentElement.dataset.count; 
+                const count = +counter.innerText; 
+                const increment = target / speed;
+                
+                if (count < target) {
+                    counter.innerText  = Math.ceil(count  + increment);
+                    setTimeout(updateCounter, 1);
+                } else {
+                    counter.innerText  = target;
+                }
+                
+                function updateCounter() {
+                    const count = +counter.innerText; 
+                    if (count < target) {
+                        counter.innerText  = Math.ceil(count  + increment);
+                        setTimeout(updateCounter, 1);
+                    } else {
+                        counter.innerText  = target;
+                    }
+                }
+            });
+            
+            // 可拖动方块交互
+            const dragItems = document.querySelectorAll('.drag-item'); 
+            const dropZone = document.getElementById('drop-zone'); 
+            let draggedItem = null;
+            
+            dragItems.forEach(item  => {
+                item.addEventListener('dragstart',  function() {
+                    draggedItem = this;
+                    setTimeout(() => {
+                        this.style.opacity  = '0.5';
+                    }, 0);
+                });
+                
+                item.addEventListener('dragend',  function() {
+                    this.style.opacity  = '1';
+                });
+            });
+            
+            dropZone.addEventListener('dragover',  function(e) {
+                e.preventDefault(); 
+                this.style.borderColor  = '#2ECC71';
+            });
+            
+            dropZone.addEventListener('dragleave',  function() {
+                this.style.borderColor  = '#4A5568';
+            });
+            
+            dropZone.addEventListener('drop',  function(e) {
+                e.preventDefault(); 
+                this.style.borderColor  = '#4A5568';
+                
+                if (draggedItem) {
+                    const blockType = draggedItem.dataset.block; 
+                    const blockIcon = draggedItem.querySelector('i').className; 
+                    
+                    this.innerHTML  = `
+                        <div class="flex flex-col items-center">
+                            <i class="${blockIcon} text-4xl mb-2"></i>
+                            <p class="text-white">已放置 ${blockType} 方块</p>
+                        </div>
+                    `;
+                    
+                    // 添加放置效果
+                    this.style.transform  = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform  = 'scale(1)';
+                    }, 300);
+                }
+            });
+            
+            // 重置方块按钮
+            document.getElementById('reset-blocks').addEventListener('click',  function() {
+                dropZone.innerHTML  = '<p class="text-center text-gray-400">拖动方块到此处进行组合</p>';
+                
+                // 添加重置动画
+                dropZone.style.transform  = 'rotate(5deg)';
+                setTimeout(() => {
+                    dropZone.style.transform  = 'rotate(0)';
+                }, 300);
+            });
+            
+            // 规则问答交互
+            const ruleQuestions = document.querySelectorAll('.rule-question'); 
+            
+            ruleQuestions.forEach(question  => {
+                question.addEventListener('click',  function() {
+                    const answer = this.querySelector('.rule-answer'); 
+                    const icon = this.querySelector('.fa-chevron-down'); 
+                    
+                    if (answer.classList.contains('hidden'))  {
+                        answer.classList.remove('hidden'); 
+                        icon.style.transform  = 'rotate(180deg)';
+                        
+                        // 滚动到完整显示答案
+                        answer.scrollIntoView({  behavior: 'smooth', block: 'nearest' });
+                    } else {
+                        answer.classList.add('hidden'); 
+                        icon.style.transform  = 'rotate(0deg)';
+                    }
+                });
+            });
+            
+            // 玩家评价轮播
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.testimonial-slide'); 
+            const dots = document.querySelectorAll('.dot'); 
+            const track = document.getElementById('testimonial-track'); 
+            const slideWidth = slides[0].offsetWidth;
+            
+            function goToSlide(index) {
+                track.style.transform  = `translateX(-${slideWidth * index}px)`;
+                currentSlide = index;
+                
+                // 更新dot状态
+                dots.forEach((dot,  i) => {
+                    dot.classList.toggle('active',  i === index);
+                    dot.classList.toggle('bg-gray-400',  i === index);
+                    dot.classList.toggle('bg-gray-600',  i !== index);
+                });
+            }
+            
+            dots.forEach(dot  => {
+                dot.addEventListener('click',  function() {
+                    const slideIndex = parseInt(this.dataset.slide); 
+                    goToSlide(slideIndex);
+                });
+            });
+            
+            document.querySelectorAll('.testimonial-nav').forEach(button  => {
+                button.addEventListener('click',  function() {
+                    const direction = this.dataset.direction; 
+                    
+                    if (direction === 'prev') {
+                        currentSlide = (currentSlide - 1 + slides.length)  % slides.length; 
+                    } else {
+                        currentSlide = (currentSlide + 1) % slides.length; 
+                    }
+                    
+                    goToSlide(currentSlide);
+                });
+            });
+            
+            // 自动轮播
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % slides.length; 
+                goToSlide(currentSlide);
+            }, 5000);
+            
+            // 表单提交
+            document.getElementById('join-form').addEventListener('submit',  function(e) {
+                e.preventDefault(); 
+                
+                // 模拟表单提交
+                const submitBtn = this.querySelector('button[type="submit"]'); 
+                const originalText = submitBtn.innerHTML; 
+                
+                submitBtn.innerHTML  = '<i class="fas fa-spinner fa-spin mr-2"></i> 处理中...';
+                submitBtn.disabled  = true;
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML  = '<i class="fas fa-check mr-2"></i> 申请已提交';
+                    
+                    // 显示成功消息
+                    const successMsg = document.createElement('div'); 
+                    successMsg.className  = 'mt-4 p-4 bg-green-900 text-green-300 rounded-lg';
+                    successMsg.innerHTML  = `
+                        <p class="font-bold">感谢您的申请!</p>
+                        <p class="text-sm mt-1">我们已发送确认邮件到您的邮箱，请查收并完成注册。</p>
+                    `;
+                    
+                    this.appendChild(successMsg); 
+                    
+                    // 重置表单
+                    setTimeout(() => {
+                        this.reset(); 
+                        submitBtn.innerHTML  = originalText;
+                        submitBtn.disabled  = false;
+                        successMsg.remove(); 
+                    }, 5000);
+                }, 2000);
+            });
+            
+            // 地图控制交互
+            document.querySelectorAll('.map-control').forEach(control  => {
+                control.addEventListener('click',  function() {
+                    const action = this.dataset.action; 
+                    const map = document.getElementById('interactive-map'); 
+                    
+                    switch(action) {
+                        case 'zoom-in':
+                            map.style.transform  = 'scale(1.1)';
+                            break;
+                        case 'zoom-out':
+                            map.style.transform  = 'scale(0.9)';
+                            break;
+                        case 'reset':
+                            map.style.transform  = 'scale(1)';
+                            break;
+                        case 'legend':
+                            alert('地图图例:\n绿色-保护区\n蓝色-商业区\n紫色-市政中心');
+                            break;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
